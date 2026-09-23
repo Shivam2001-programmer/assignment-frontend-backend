@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+  // linux-musl-openssl-3.0.x is the engine for the node:22-alpine runtime image
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  CONVERTED
+  LOST
+}
+
+enum ActivityType {
+  LEAD_CREATED
+  LEAD_UPDATED
+  STATUS_CHANGED
+}
+
+enum WebhookEventStatus {
+  RECEIVED
+  PROCESSED
+  FAILED
+}
+
+/// A lead captured from an ad platform. (source, externalId) is the idempotency key.
+model Lead {
+  id            String     @id @default(uuid()) @db.Uuid
+  source        String     @default("meta")
+  /// Platform-side id — Meta's leadgen_id.
+  externalId    String     @map("external_id")
+  fullName      String?    @map("full_name")
+  email         String?
+  phone         String?
+  pageId        String?    @map("page_id")
+  formId        String?    @map("form_id")
+  adId          String?    @map("ad_id")
+  adsetId       String?    @map("adset_id")
+  campaignId    String?    @map("campaign_id")
+  /// Form answers that don't map to a first-class column, keyed by Meta field name.
+  customFields  Json       @default("{}") @map("custom_fields")
+  status        LeadStatus @default(NEW)
+  /// Incremented on every write; used for optimistic concurrency on status changes.
+  version       Int        @default(1)
+  /// When the lead was submitted on the platform (Meta created_time).
+  submittedAt   DateTime?  @map("submitted_at") @db.Timestamptz(3)
+  createdAt     DateTime   @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt     DateTime   @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  activities    LeadActivity[]
+
+  @@unique([source, externalId])
+  @@index([status, createdAt(sort: Desc)])
+  @@index([createdAt(sort: Desc)])
+  @@map("leads")
+}
+
+/// Append-only audit log. Rows are never updated or deleted by the application.
+model LeadActivity {
+  id        String       @id @default(uuid()) @db.Uuid
+  leadId    String       @map("lead_id") @db.Uuid
+  type      ActivityType
+  /// Who caused the change, e.g. "system:meta-webhook" or "user:<name>".
+  actor     String
+  /// Field-level diff: { "<field>": { "from": <old>, "to": <new> } }.
+  changes   Json?
+  /// Context such as the webhook event id or a free-text note.
+  metadata  Json?
+  createdAt DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  lead      Lead         @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  @@index([leadId, createdAt(sort: Desc)])
+  @@map("lead_activities")
+}
+
+/// Every signed webhook delivery as received — enables debugging and replay.
+model WebhookEvent {
+  id          String             @id @default(uuid()) @db.Uuid
+  provider    String
+  payload     Json
+  status      WebhookEventStatus @default(RECEIVED)
+  error       String?
+  receivedAt  DateTime           @default(now()) @map("received_at") @db.Timestamptz(3)
+  processedAt DateTime?          @map("processed_at") @db.Timestamptz(3)
+
+  @@index([status, receivedAt])
+  @@map("webhook_events")
+}
