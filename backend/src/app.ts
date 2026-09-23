@@ -7,6 +7,7 @@ import { env } from './config/env.js';
 import { logger } from './lib/logger.js';
 import { errorHandler, notFoundHandler } from './middleware/error-handler.js';
 import { healthRouter } from './modules/health/health.routes.js';
+import { metaWebhookRouter } from './modules/webhook/meta.routes.js';
 
 export function createApp() {
   const app = express();
@@ -38,6 +39,8 @@ export function createApp() {
   );
 
   app.use(healthRouter);
+  // Mounted before express.json(): the webhook needs the untouched raw body to verify its signature.
+  app.use(metaWebhookRouter);
 
   app.use(express.json({ limit: '100kb' }));
 
