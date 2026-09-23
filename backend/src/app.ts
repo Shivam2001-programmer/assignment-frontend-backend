@@ -5,6 +5,7 @@ import { pinoHttp } from 'pino-http';
 import { randomUUID } from 'node:crypto';
 import { env } from './config/env.js';
 import { logger } from './lib/logger.js';
+import { errorHandler, notFoundHandler } from './middleware/error-handler.js';
 import { healthRouter } from './modules/health/health.routes.js';
 
 export function createApp() {
@@ -37,6 +38,11 @@ export function createApp() {
   );
 
   app.use(healthRouter);
+
+  app.use(express.json({ limit: '100kb' }));
+
+  app.use(notFoundHandler);
+  app.use(errorHandler);
 
   return app;
 }
