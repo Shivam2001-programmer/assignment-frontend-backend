@@ -1,0 +1,23 @@
+.form {
+  display: grid;
+  gap: 12px;
+}
+
+.field {
+  display: grid;
+  gap: 4px;
+  font-weight: 500;
+}
+
+.field textarea {
+  resize: vertical;
+  font-weight: 400;
+}
+
+.error {
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--danger-bg);
+  color: var(--danger);
+}

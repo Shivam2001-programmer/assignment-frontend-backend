@@ -1,0 +1,39 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.badge[data-status='NEW'] {
+  color: var(--status-new);
+  background: var(--status-new-bg);
+}
+.badge[data-status='CONTACTED'] {
+  color: var(--status-contacted);
+  background: var(--status-contacted-bg);
+}
+.badge[data-status='QUALIFIED'] {
+  color: var(--status-qualified);
+  background: var(--status-qualified-bg);
+}
+.badge[data-status='CONVERTED'] {
+  color: var(--status-converted);
+  background: var(--status-converted-bg);
+}
+.badge[data-status='LOST'] {
+  color: var(--status-lost);
+  background: var(--status-lost-bg);
+}

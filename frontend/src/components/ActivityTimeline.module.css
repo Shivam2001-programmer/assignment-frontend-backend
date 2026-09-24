@@ -1,0 +1,104 @@
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  gap: 12px;
+  padding-bottom: 20px;
+}
+
+.item:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: 18px;
+  bottom: 0;
+  width: 2px;
+  background: var(--border);
+}
+
+.dot {
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  border-radius: 50%;
+  border: 4px solid var(--surface);
+  box-shadow: 0 0 0 1px var(--border);
+  background: var(--status-lost);
+}
+.item[data-type='LEAD_CREATED'] .dot {
+  background: var(--status-converted);
+}
+.item[data-type='LEAD_UPDATED'] .dot {
+  background: var(--status-contacted);
+}
+.item[data-type='STATUS_CHANGED'] .dot {
+  background: var(--accent);
+}
+
+.content {
+  min-width: 0;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+}
+
+.time {
+  margin-left: auto;
+  font-size: 12px;
+}
+
+.statusChange {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.note {
+  margin: 8px 0 0;
+  padding: 8px 12px;
+  border-left: 3px solid var(--border);
+  background: var(--surface-muted);
+  border-radius: 0 6px 6px 0;
+}
+
+.meta {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+}
+
+.changes {
+  margin: 6px 0 0;
+  display: grid;
+  gap: 4px;
+}
+
+.change {
+  display: grid;
+  grid-template-columns: minmax(90px, max-content) 1fr;
+  gap: 8px;
+}
+
+.change dt {
+  color: var(--text-muted);
+}
+
+.change dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.from {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}

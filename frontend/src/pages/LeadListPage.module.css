@@ -1,0 +1,80 @@
+.titleRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.titleRow h1 {
+  font-size: 22px;
+}
+
+.titleRow p {
+  margin: 4px 0 0;
+}
+
+.panel {
+  overflow: hidden;
+}
+
+.filters {
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.search {
+  flex: 1;
+  min-width: 220px;
+}
+
+.search input {
+  width: 100%;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  padding: 10px 16px;
+  background: var(--surface-muted);
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  vertical-align: top;
+}
+
+.row {
+  cursor: pointer;
+}
+
+.row:hover td {
+  background: var(--surface-muted);
+}
+
+.name {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.sub {
+  font-size: 12px;
+}
