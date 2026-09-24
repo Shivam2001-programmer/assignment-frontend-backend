@@ -16,5 +16,36 @@ services:
       timeout: 3s
       retries: 10
 
+  api:
+    build: ./backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 4000
+      DATABASE_URL: postgresql://leads:leads@db:5432/leads?schema=public
+      CORS_ORIGIN: http://localhost:8080
+      META_APP_SECRET: ${META_APP_SECRET:-local-dev-app-secret}
+      META_VERIFY_TOKEN: ${META_VERIFY_TOKEN:-local-dev-verify-token}
+      SEED_DEMO_DATA: ${SEED_DEMO_DATA:-true}
+    ports:
+      - "4000:4000"
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: /api
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      API_UPSTREAM: http://api:4000
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+
 volumes:
   pgdata:
